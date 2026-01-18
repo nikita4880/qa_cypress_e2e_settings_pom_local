@@ -43,7 +43,7 @@ Cypress.Commands.add('register', (email = 'riot@qa.team', username = 'riot', pas
 });
 
 Cypress.Commands.add('login', (email = 'riot@qa.team', username = 'riot', password = '12345Qwert!') => {
-  cy.request('POST', '/api/users', {
+  cy.request('POST', '/api/users/login', {
     user: {
       email,
       username,
@@ -76,5 +76,5 @@ Cypress.Commands.add('generateEmail', () => {
 });
 
 Cypress.Commands.add('generatePassword', () => {
-  return faker.internet.password();
+  return faker.internet.password({ length: 10, pattern: /[a-zA-Z0-9!@#$%^&*()]/ });
 });

@@ -27,12 +27,6 @@ class SettingsPageObject extends PageObject {
     cy.get('[data-cy="password-input"]').clear().type(newValue);
   }
 
-  changeItem(placeholder, newValue) {
-    cy.get(`[placeholder="${placeholder}"]`).as('input');
-    cy.get('@input').clear();
-    cy.get('@input').type(newValue);
-  }
-
   checkUrl(username) {
     cy.url().should('include', `/profile/${username}`);
   }

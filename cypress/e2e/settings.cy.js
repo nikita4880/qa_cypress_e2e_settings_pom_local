@@ -1,5 +1,3 @@
-import { faker } from '@faker-js/faker';
-
 import SettingsPage from '../support/pages/settings.pageObject';
 
 const settingPage = new SettingsPage();
@@ -23,41 +21,54 @@ describe('Settings page', () => {
   });
 
   it('should provide an ability to update username', () => {
-    const newUsername = `${faker.person.lastName().toLocaleLowerCase()}8675`;
-
-    settingPage.changeItem('Username', `${newUsername}`);
-    settingPage.clickOnUpdateSettingsBtn();
-    settingPage.checkUrl(newUsername);
+    cy.generateUsername().then((newUsername) => {
+      settingPage.changeUsername(newUsername);
+      settingPage.clickOnUpdateSettingsBtn();
+      settingPage.checkUrl(newUsername);
+      // Verify that username was actually updated in the form
+      cy.visit('/settings');
+      settingPage.getUsername().should('equal', newUsername);
+    });
   });
 
   it('should provide an ability to update bio', () => {
-    const newBio = faker.person.bio();
-
-    settingPage.changeItem('Short bio about you', `${newBio}`);
-    settingPage.clickOnUpdateSettingsBtn();
-    settingPage.checkUrl(user.username);
+    cy.generateBio().then((newBio) => {
+      settingPage.changeBio(newBio);
+      settingPage.clickOnUpdateSettingsBtn();
+      settingPage.checkUrl(user.username);
+      // Verify that bio was actually updated by checking the form
+      cy.visit('/settings');
+      settingPage.getBio().should('equal', newBio);
+    });
   });
 
   it('should provide an ability to update an email', () => {
-    const newEmail = faker.internet.email();
-
-    settingPage.changeItem('Email', `${newEmail}`);
-    settingPage.clickOnUpdateSettingsBtn();
-    settingPage.checkUrl(user.username);
+    cy.generateEmail().then((newEmail) => {
+      settingPage.changeEmail(newEmail);
+      settingPage.clickOnUpdateSettingsBtn();
+      settingPage.checkUrl(user.username);
+      // Verify that email was actually updated in the form
+      cy.visit('/settings');
+      settingPage.getEmail().should('equal', newEmail);
+    });
   });
 
   it('should provide an ability to update password', () => {
-    const newPass = faker.internet.password();
-
-    settingPage.changeItem('New Password', `${newPass}`);
-    settingPage.clickOnUpdateSettingsBtn();
-    settingPage.checkUrl(user.username);
+    cy.generatePassword().then((newPassword) => {
+      settingPage.changePassword(newPassword);
+      settingPage.clickOnUpdateSettingsBtn();
+      settingPage.checkUrl(user.username);
+      // Verify password change by logging out and logging back in with new password
+      cy.visit('/settings');
+      settingPage.clickLogoutBtn();
+      cy.url().should('include', '/');
+      cy.login(user.email, user.username, newPassword);
+      cy.url().should('include', '/');
+    });
   });
 
   it('should provide an ability to log out', () => {
-    const newUsername = faker.person.fullName();
-
-    cy.contains('button', 'Or click here to logout.').click();
+    settingPage.clickLogoutBtn();
     cy.url().should('include', '/');
   });
 });
